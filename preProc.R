@@ -33,13 +33,14 @@ fitControl <- trainControl(method = "repeatedcv",
                            repeats = 5,
                            classProbs = TRUE,
                            summaryFunction = multiClassSummary,
-                           search = "random")
+                           search = "random",
+                           verboseIter = TRUE)
 
 set.seed(825)
 gbmFit <- train(x = subTrain, 
                 y = train_target[inTraining],
                 method = "gbm",
                 metric = "ROC",
-                tuneLength = 50,
+                tuneLength = 5,
                 trControl = fitControl)
 
