@@ -6,7 +6,7 @@ library(data.table)
 options(stringsAsFactors = FALSE)
 ## set wording directory
 setwd("~/Workspace/shelterAnimals/")
-
+rm(list = ls())
 source("./lib.R")
 
 ## load data
@@ -24,9 +24,9 @@ registerDoMC(cores = detectCores())
 library(caret)
 library(pROC)
 set.seed(123)
-inTraining <- createDataPartition(train_muted$OutcomeType, p = .8, list = FALSE)
-subTrain <- train_muted[inTraining,]
-subTest <- train_muted[-inTraining,]
+inTraining <- createDataPartition(train_target, p = .8, list = FALSE)
+subTrain <- train_feature[inTraining,]
+subTest <- train_feature[-inTraining,]
 
 fitControl <- trainControl(method = "repeatedcv",
                            number = 5,
@@ -36,9 +36,10 @@ fitControl <- trainControl(method = "repeatedcv",
                            search = "random")
 
 set.seed(825)
-gbmFit <- train(OutcomeType ~ ., data = subTrain, 
-               method = "gbm",
-               metric = "ROC",
-               tuneLength = 50,
-               trControl = fitControl)
+gbmFit <- train(x = subTrain, 
+                y = train_target[inTraining],
+                method = "gbm",
+                metric = "ROC",
+                tuneLength = 50,
+                trControl = fitControl)
 
